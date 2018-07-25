@@ -2,7 +2,50 @@ library(dplyr)
 
 function(input, output, session) {
 
-  ## Data Explorer ###########################################
+  ##Summary Page 
+  output$bubbleChart <- renderPlotly({
+    summary_df = cleantable %>% na.omit() %>% group_by(Country) %>%
+      summarise(avg_price = mean(Price),avg_points = mean(Points),total_reviews = n())
+    summary_df = summary_df %>% mutate(ratio = avg_price/avg_points)
+    summary_df = summary_df %>% mutate(Co = cor(avg_price,avg_points))
+    
+    
+    ggplot(summary_df, aes(x=avg_points, y=avg_price)) + geom_point(aes(size = (total_reviews), colour = summary_df$Country, alpha= Co)) + xlim(c(85,92)) + ylim(c(20,50)) + geom_text(aes(label = summary_df$Country), size = 3, nudge_x = 0.0, nudge_y = 0) + scale_size_continuous(range=c(1, 20))
+    #+geom_text(aes(label=Country),hjust=0, vjust=0)
+    #ORIGNIAL GRAPH #ggplot(summary_df, aes(x=avg_points, y=avg_price, size=total_reviews,label = Country )) + geom_point(alpha=0.2) + scale_size_continuous( range=c(1, 25))+geom_text(aes(label=Country),hjust=0, vjust=0)
+    #sizing bubbles - scale_size_area(max_size = 75, limits= c(10,80), breaks= c(0,25, 50, 75))+
+    #plot_ly(summary_df, x = ~avg_points, y = ~avg_price, text = paste("Country: ", summary_df$Country), type = 'scatter', mode = 'markers', marker = list(size = ~as.numeric(summary_df$total_reviews), sizeref = 0.1, opacity = 0.5),sizes = c(0.5,5)) %>%
+     #   layout(title = 'Price vs. Points by Country', xaxis = list(showgrid = FALSE), yaxis = list(showgrid = FALSE))
+})
+  #original graph - ggplot(summary_df, aes(x=avg_points, y=avg_price, size=total_reviews,label = Country )) + geom_point(alpha=0.2) + scale_size_continuous( range=c(1, 25))+geom_text(aes(label=Country),hjust=0, vjust=0) + theme_bw()
+  # output$TopTen <- DT::renderDataTable({
+  #   var.name = input$value
+  #   cat.name = input$category
+  #   group_var <- cat.name   # group by this variable
+  #   summ <- paste0('mean(', var.name, ')')  # construct summary method, e.g. mean(mpg)
+  #   summ_name <- paste0('mean_', var.name)  # construct summary variable name, e.g. mean_mpg
+  #   
+  #   df_summ <- cleantable %>% na.omit() %>%
+  #     group_by_(.dots = group_var) %>%
+  #     summarise_(.dots = setNames(summ, summ_name))
+  #   
+  #   DT::datatable(df_summ)
+  # })
+  # output$TopTen <- renderPlot({
+  # var.name <- input$value
+  # cat.name <- input$category
+  # summ <- paste0('mean(', var.name, ')')  # construct summary method, e.g. mean(mpg)
+  # summ_name <- paste0('mean_', var.name)  # construct summary variable name, e.g. mean_mpg
+  # #   
+  # 
+  # df_summ1 <- cleantable %>% na.omit() %>%
+  #   group_by_(.dots = group_var) %>%
+  #   summarise_(.dots = setNames(summ, summ_name))
+  # 
+  # ggplot(data = df_summ1, aes(x = cleantable$Price, y = cleantable$Points)) + geom_line()
+  # })
+
+  # Data Explorer ###########################################
 
   observe({
     province <- if (is.null(input$country)) character(0) else {

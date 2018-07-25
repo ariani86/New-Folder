@@ -9,10 +9,19 @@
 
 library(shiny)
 
-
-
     
 navbarPage("WineDiscovery", id="nav",
+           tabPanel("Summary",
+              # sidebarPanel(
+              #   selectInput('category', "Select Category", c('Country','Province','Variety','Winery')),
+              #   selectInput('value',"Select Value",c('Price','Points'))
+              # ),          
+            # mainPanel(
+               #plotlyOutput('bubbleChart')
+               
+            # )
+            plotlyOutput('bubbleChart')
+           ),
            
            tabPanel("Data explorer",
                     fluidRow(
@@ -51,6 +60,8 @@ navbarPage("WineDiscovery", id="nav",
                     hr(),
                     DT::dataTableOutput("winetable")
            ),
+           #sidebarPanel(tags$img(src = "winepic.jpg",height = 50, width = 100)),
+           
            tabPanel("Wine Visuals",
                     sidebarPanel(
                       selectInput("histCountry", "Country", c("All countries"="", sort(unique(as.character(cleantable$Country)))), multiple=TRUE),

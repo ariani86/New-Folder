@@ -10,6 +10,7 @@ library(SnowballC)
 library(RColorBrewer)
 library(shiny)
 library(shinydashboard)
+library(plotly)
 # library(googleCharts)
 
 wine.df <- read.csv("./data/winemag-data-130k-v3.csv",fileEncoding = "latin1")
@@ -18,6 +19,9 @@ wine.df$vintage_year <- as.numeric(wine.df$vintage_year)
 
 wine.df$vintage_year[as.numeric(wine.df$vintage_year)>2018] <- 2018
 wine.df$vintage_year[as.numeric(wine.df$vintage_year)<1934] <- median(wine.df$vintage_year[!is.na(wine.df$vintage_year)])
+
+Price_mean_all = mean(wine.df$price, na.rm = TRUE)
+Points_mean_all= mean(wine.df$points, na.rm = TRUE)
 
 randowRows = function(df, n){
   return (df[sample(nrow(df),n),])
